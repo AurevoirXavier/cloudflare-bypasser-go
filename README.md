@@ -4,6 +4,10 @@
 
 Inspired by python module [cloudflare-scrape](https://github.com/Anorov/cloudflare-scrape)
 
+## Install
+
+`go get github.com/AurevoirXavier/cloudflare-bypasser-go`
+
 ## Require
 
 - **Node.js**
