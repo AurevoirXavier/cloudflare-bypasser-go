@@ -94,7 +94,7 @@ func NewBypasser(session *http.Client) Client {
     return Client{session: session}
 }
 
-func (bypasser *Client) Bypass(r *http.Request, retry uint) (string, *http.CookieJar, error) {
+func (bypasser *Client) Bypass(r *http.Request, retry uint) (string, []*http.Cookie, error) {
     var (
         userAgent = r.Header.Get("User-Agent")
         u         = r.URL
@@ -159,7 +159,7 @@ func (bypasser *Client) Bypass(r *http.Request, retry uint) (string, *http.Cooki
         defer resp.Body.Close()
 
         if resp.StatusCode == 200 {
-            return userAgent, &bypasser.session.Jar, nil
+            return userAgent, bypasser.session.Jar.Cookies(u), nil
         }
     }
 
