@@ -94,7 +94,7 @@ func NewBypasser(session *http.Client) Client {
     return Client{session: session}
 }
 
-func (bypasser *Client) Bypass(r *http.Request, retry uint) (*url.URL, []*http.Cookie, error) {
+func (bypasser *Client) Bypass(r *http.Request, retry uint) (string, *http.CookieJar, error) {
     var (
         userAgent = r.Header.Get("User-Agent")
         u         = r.URL
@@ -119,26 +119,26 @@ func (bypasser *Client) Bypass(r *http.Request, retry uint) (*url.URL, []*http.C
 
     resp, e = bypasser.session.Do(r)
     if e != nil {
-        return nil, nil, e
+        return "", nil, e
     }
     defer resp.Body.Close()
 
     content, e = ioutil.ReadAll(resp.Body)
     if e != nil {
-        return nil, nil, e
+        return "", nil, e
     }
     html = string(content)
 
     params, e = parseParams(html)
     if e != nil {
-        return nil, nil, e
+        return "", nil, e
     }
 
     domain = u.Host
     challenge = parseChallenge(html, domain)
     jschlAnswer, e = runJs(challenge)
     if e != nil {
-        return nil, nil, e
+        return "", nil, e
     }
     params["jschl_answer"] = jschlAnswer
 
@@ -154,14 +154,14 @@ func (bypasser *Client) Bypass(r *http.Request, retry uint) (*url.URL, []*http.C
     for i := uint(1); i != retry; i += 1 {
         resp, e = bypasser.session.Do(r)
         if e != nil {
-            return nil, nil, e
+            return "", nil, e
         }
         defer resp.Body.Close()
 
         if resp.StatusCode == 200 {
-            return u, bypasser.session.Jar.Cookies(u), nil
+            return userAgent, &bypasser.session.Jar, nil
         }
     }
 
-    return nil, nil, errors.New("reach max retries")
+    return "", nil, errors.New("reach max retries")
 }

@@ -26,13 +26,13 @@ import (
 
 func main() {
     var (
-        _            = os.Setenv("HTTP_PROXY", "http://127.0.0.1:1087")
-        client       = bypasser.NewBypasser(http.DefaultClient)
-        req, _       = http.NewRequest("GET", "http://cosplayjav.pl", nil)
-        u, cookie, _ = client.Bypass(req, 0)
+        _                    = os.Setenv("HTTP_PROXY", "http://127.0.0.1:1087")
+        client               = bypasser.NewBypasser(http.DefaultClient)
+        req, _               = http.NewRequest("GET", "http://cosplayjav.pl", nil)
+        userAgent, cookie, _ = client.Bypass(req, 0)
     )
 
-    fmt.Println(u)
+    fmt.Println(userAgent)
     fmt.Println(cookie)
 }
 ```
