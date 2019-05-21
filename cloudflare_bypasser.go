@@ -94,7 +94,7 @@ func NewBypasser(session *http.Client) Client {
     return Client{session: session}
 }
 
-func (bypasser *Client) Solve(r *http.Request, retry uint) (*url.URL, []*http.Cookie, error) {
+func (bypasser *Client) Bypass(r *http.Request, retry uint) (*url.URL, []*http.Cookie, error) {
     var (
         userAgent = r.Header.Get("User-Agent")
         u         = r.URL
@@ -159,9 +159,9 @@ func (bypasser *Client) Solve(r *http.Request, retry uint) (*url.URL, []*http.Co
         }
 
         if resp.StatusCode == 200 {
-            break
+            return u, bypasser.session.Jar.Cookies(u), nil
         }
     }
 
-    return u, bypasser.session.Jar.Cookies(u), nil
+    return nil, nil, errors.New("reach max retries")
 }
