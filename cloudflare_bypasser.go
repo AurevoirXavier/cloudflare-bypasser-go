@@ -118,10 +118,10 @@ func (bypasser *Client) Bypass(r *http.Request, retry uint) (*url.URL, []*http.C
     }
 
     resp, e = bypasser.session.Do(r)
-    defer resp.Body.Close()
     if e != nil {
         return nil, nil, e
     }
+    defer resp.Body.Close()
 
     content, e = ioutil.ReadAll(resp.Body)
     if e != nil {
@@ -153,10 +153,10 @@ func (bypasser *Client) Bypass(r *http.Request, retry uint) (*url.URL, []*http.C
 
     for i := uint(1); i != retry; i += 1 {
         resp, e = bypasser.session.Do(r)
-        defer resp.Body.Close()
         if e != nil {
             return nil, nil, e
         }
+        defer resp.Body.Close()
 
         if resp.StatusCode == 200 {
             return u, bypasser.session.Jar.Cookies(u), nil
